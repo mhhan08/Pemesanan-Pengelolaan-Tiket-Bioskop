@@ -1,17 +1,35 @@
 package config;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Properties;
 
 public class DBConnection {
-    private static final String URL = "jdbc:postgresql://localhost:5432/cinema_db";
-    private static final String USER = "postgres";
-    private static final String PASSWORD = "mhhan-wsl";
+    private static Properties properties = new Properties();
+
+    // blok static untuk membaca file properti otomatis
+    static {
+        try (InputStream input = DBConnection.class.getClassLoader().getResourceAsStream("database.properties")) {
+            if (input == null) {
+                System.out.println("Maaf, file database.properties tidak ditemukan di folder src!");
+            } else {
+                properties.load(input);
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
 
     public static Connection getConnection() {
         try {
-            return DriverManager.getConnection(URL, USER, PASSWORD);
+            String url = properties.getProperty("db.url");
+            String user = properties.getProperty("db.username");
+            String pass = properties.getProperty("db.password");
+
+            return DriverManager.getConnection(url, user, pass);
         } catch (SQLException e) {
             System.out.println("Gagal koneksi: " + e.getMessage());
             return null;
