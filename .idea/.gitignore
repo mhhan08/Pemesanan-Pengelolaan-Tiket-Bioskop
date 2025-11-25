@@ -1,10 +1,24 @@
-# Default ignored files
+# --- Konfigurasi IDE (IntelliJ) ---
+.idea/
+*.iml
+*.iws
 /shelf/
 /workspace.xml
-# Editor-based HTTP Client requests
-/httpRequests/
-# Environment-dependent path to Maven home directory
 /mavenHomeManager.xml
-# Datasource local storage ignored files
+
+# --- File Hasil Compile (Sampah Build) ---
+out/
+target/
+build/
+*.class
+
+# --- Database & HTTP Client IDE ---
 /dataSources/
 /dataSources.local.xml
+/httpRequests/
+
+src/config/database.properties
+
+# --- File Sistem Operasi (Mac/Windows) ---
+.DS_Store
+Thumbs.db

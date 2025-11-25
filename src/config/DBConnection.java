@@ -14,7 +14,7 @@ public class DBConnection {
     static {
         try (InputStream input = DBConnection.class.getClassLoader().getResourceAsStream("database.properties")) {
             if (input == null) {
-                System.out.println("Maaf, file database.properties tidak ditemukan di folder src!");
+                System.out.println("database not found");
             } else {
                 properties.load(input);
             }
@@ -30,6 +30,7 @@ public class DBConnection {
             String pass = properties.getProperty("db.password");
 
             return DriverManager.getConnection(url, user, pass);
+
         } catch (SQLException e) {
             System.out.println("Gagal koneksi: " + e.getMessage());
             return null;
