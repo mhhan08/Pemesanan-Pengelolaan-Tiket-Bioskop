@@ -1,3 +1,5 @@
+package patterns.strategy;
+
 public class WeekdayStrategy implements PriceStrategy {
     @Override
     public double calculate(double basePrice) {

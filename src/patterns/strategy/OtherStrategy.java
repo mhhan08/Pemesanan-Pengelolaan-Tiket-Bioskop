@@ -1,3 +1,5 @@
+package patterns.strategy;
+
 public class OtherStrategy implements PriceStrategy {
     private double adjustment;
     private String eventName;
