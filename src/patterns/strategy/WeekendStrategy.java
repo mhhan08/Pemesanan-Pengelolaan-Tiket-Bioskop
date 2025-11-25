@@ -1,0 +1,11 @@
+public class WeekendStrategy implements PriceStrategy {
+    @Override
+    public double calculate(double basePrice) {
+        return basePrice + 20.0; // Harga dasar + 20
+    }
+
+    @Override
+    public String getName() {
+        return "Weekend";
+    }
+}
