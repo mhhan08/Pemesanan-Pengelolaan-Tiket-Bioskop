@@ -27,6 +27,13 @@ public class Ticket {
                 "Date: " + bookingDate.toString();
     }
 
-    public double getFinalPrice() { return finalPrice; }
-    public String getBookingId() { return bookingId; }
+    public double getFinalPrice() {
+        return finalPrice;
+    }
+    public String getBookingId() {
+        return bookingId;
+    }
+    public String getSeatCode() {
+        return seatCode;
+    }
 }

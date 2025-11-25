@@ -21,6 +21,11 @@ public abstract class Studio {
         return null;
     }
 
+    // getter list jadwal
+    public List<Schedule> getSchedules() {
+        return schedules;
+    }
+
     //untuk menerima angka yg di klik dari gui
     public boolean bookSeatByIndex(String time, int row, int col) {
         // validasi index kursi
@@ -43,8 +48,21 @@ public abstract class Studio {
         return false;
     }
 
-    public List<Schedule> getSchedules() {
-        return schedules;
+    public boolean bookSeat(String time, String seatCode) {
+        try {
+            // konversi tempat duduk
+            char rowChar = seatCode.toUpperCase().charAt(0);
+            int row = rowChar - 'A';
+
+            String colStr = seatCode.substring(1);
+            int col = Integer.parseInt(colStr) - 1;
+
+            // panggil method booking dengan index kursi yg sudah diubah
+            return bookSeatByIndex(time, row, col);
+
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public String getName() {
@@ -53,5 +71,13 @@ public abstract class Studio {
 
     public double getBasePrice() {
         return basePrice;
+    }
+
+    // getter ukuran array untuk loop tombol di gui
+    public int getRowCount() {
+        return seats.length;
+    }
+    public int getColCount() {
+        return seats[0].length;
     }
 }
