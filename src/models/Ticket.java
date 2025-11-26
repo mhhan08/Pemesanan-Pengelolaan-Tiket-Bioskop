@@ -17,15 +17,17 @@ public class Ticket {
         this.bookingDate = new Date();
     }
 
-    public String getTicketInfo() {
-        return "=== TICKET (" + bookingId + ") ===\n" +
-                "Movie: " + schedule.getMovie().getTitle() + "\n" +
-                "Studio: " + "Cinema Studio" + "\n" +
-                "Time: " + schedule.getDay() + " " + schedule.getTime() + "\n" +
-                "Seat: " + seatCode + "\n" +
-                "Price: Rp " + finalPrice + "\n" +
-                "Date: " + bookingDate.toString();
+    public Schedule getSchedule() {
+        return schedule;
     }
+
+    public String getSeat(){
+        return seatCode;
+    }
+
+    public double getPrice(){
+        return finalPrice;
+    }    
 
     public double getFinalPrice() {
         return finalPrice;
@@ -35,5 +37,15 @@ public class Ticket {
     }
     public String getSeatCode() {
         return seatCode;
+    }
+
+    public String getTicketInfo() {
+        return "=== TICKET (" + bookingId + ") ===\n" +
+                "Movie: " + schedule.getMovie().getTitle() + "\n" +
+                "Studio: " + "Cinema Studio" + "\n" +
+                "Time: " + schedule.getDay() + " " + schedule.getTime() + "\n" +
+                "Seat: " + seatCode + "\n" +
+                "Price: Rp " + finalPrice + "\n" +
+                "Date: " + bookingDate.toString();
     }
 }
