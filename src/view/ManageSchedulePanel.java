@@ -1,4 +1,13 @@
 package view;
+import javax.swing.*;
+import java.awt.*;
 
-public class ManageSchedulePanel {
+public class ManageSchedulePanel extends JPanel {
+    public ManageSchedulePanel(CardLayout cardLayout, JPanel mainPanel) {
+        add(new JLabel("Halaman Kelola Jadwal (Coming Soon)"));
+        JButton btnBack = new JButton("Kembali");
+        btnBack.addActionListener(e -> cardLayout.show(mainPanel, "Dashboard"));
+        add(btnBack);
+    }
+    public void refreshData() {}
 }
