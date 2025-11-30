@@ -12,218 +12,222 @@ import java.util.List;
 
 public class MainCinemaGUI extends JFrame {
 
+    private static final String PANEL_DASHBOARD = "Dashboard";
+    private static final String PANEL_MOVIE = "ManageMovie";
+    private static final String PANEL_STUDIO = "ManageStudio";
+    private static final String PANEL_SCHEDULE = "ManageSchedule";
+    private static final String PANEL_BOOKING = "Booking";
+    private static final String FONT_NAME = "Segoe UI"; // Konstanta font
+
     // controller utama
-    private CinemaSystemFacade facade = new CinemaSystemFacade();
+    private final transient CinemaSystemFacade facade = new CinemaSystemFacade();
 
-    // layout manager untuk ganti ganti halaman
-    private CardLayout cardLayout;
-    private JPanel mainPanel;
+    private final CardLayout cardLayout;
+    private final JPanel mainPanel;
 
-    // panel-panel halaman
-    private ManageMoviePanel moviePanel;
-    private ManageStudioPanel studioPanel;
-    private ManageSchedulePanel schedulePanel;
-    private BookingPanel bookingPanel;
+    // panel halaman lain
+    private final ManageMoviePanel moviePanel;
+    private final ManageStudioPanel studioPanel;
+    private final ManageSchedulePanel schedulePanel;
+    private final BookingPanel bookingPanel;
 
-    // model tabel untuk dashboard
-    private DefaultTableModel modelMovie, modelStudio, modelSchedule;
+    // model table untuk dashboard
+    private DefaultTableModel modelMovie;
+    private DefaultTableModel modelStudio;
+    private DefaultTableModel modelSchedule;
 
     public MainCinemaGUI() {
         setTitle("Cinema XXI System - Admin Dashboard");
-        setSize(1000, 700);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(1200, 750);
+        // windowconstants untuk static access
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        // setup layout utama dengan cardlayout
         cardLayout = new CardLayout();
         mainPanel = new JPanel(cardLayout);
 
-        // inisialisasi halaman dashboard
         JPanel dashboard = createModernDashboard();
 
-        // inisialisasi panel fitur
-        moviePanel = new ManageMoviePanel(cardLayout, mainPanel);
-        studioPanel = new ManageStudioPanel(cardLayout, mainPanel);
-        schedulePanel = new ManageSchedulePanel(cardLayout, mainPanel);
-        bookingPanel = new BookingPanel(cardLayout, mainPanel);
+        // Inisialisasi panel
+        moviePanel = new ManageMoviePanel(facade, cardLayout, mainPanel);
+        studioPanel = new ManageStudioPanel(facade, cardLayout, mainPanel);
+        schedulePanel = new ManageSchedulePanel(facade, cardLayout, mainPanel);
+        bookingPanel = new BookingPanel(facade, cardLayout, mainPanel);
 
-        // daftarkan panel ke cardlayout
-        mainPanel.add(dashboard, "Dashboard");
-        mainPanel.add(moviePanel, "ManageMovie");
-        mainPanel.add(studioPanel, "ManageStudio");
-        mainPanel.add(schedulePanel, "ManageSchedule");
-        mainPanel.add(bookingPanel, "Booking");
+        // Tambahkan ke main panel
+        mainPanel.add(dashboard, PANEL_DASHBOARD);
+        mainPanel.add(moviePanel, PANEL_MOVIE);
+        mainPanel.add(studioPanel, PANEL_STUDIO);
+        mainPanel.add(schedulePanel, PANEL_SCHEDULE);
+        mainPanel.add(bookingPanel, PANEL_BOOKING);
 
         add(mainPanel);
     }
 
-    // tampilan dashboard
     private JPanel createModernDashboard() {
-        JPanel panel = new JPanel(new BorderLayout(10, 10));
-        panel.setBackground(new Color(245, 246, 250));
+        JPanel panel = new JPanel(new BorderLayout(0, 0));
+        panel.setBackground(TemplateAdmin.COLOR_BG);
 
         // header atas
-        JPanel headerPanel = new JPanel(new BorderLayout());
-        headerPanel.setBackground(new Color(44, 62, 80));
-        headerPanel.setBorder(new EmptyBorder(20, 30, 20, 30));
+        JPanel headerPanel = TemplateAdmin.createHeaderPanel("BIOSKOP MANAGEMENT SYSTEM");
+        JLabel lblSub = new JLabel(" |  Admin Dashboard");
+        lblSub.setFont(new Font(FONT_NAME, Font.PLAIN, 16));
+        lblSub.setForeground(Color.LIGHT_GRAY);
+        headerPanel.add(lblSub);
 
-        JLabel lblTitle = new JLabel("BIOSKOP MANAGEMENT SYSTEM");
-        lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 24));
-        lblTitle.setForeground(Color.WHITE);
-
-        JLabel lblSubtitle = new JLabel("Selamat Datang, Admin");
-        lblSubtitle.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        lblSubtitle.setForeground(new Color(189, 195, 199));
-
-        headerPanel.add(lblTitle, BorderLayout.WEST);
-        headerPanel.add(lblSubtitle, BorderLayout.EAST);
-
-        // tabel overview data
-        JPanel dataPanel = new JPanel(new GridLayout(1, 3, 20, 0));
+        // data table layout
+        JPanel dataPanel = new JPanel(new GridBagLayout());
         dataPanel.setOpaque(false);
-        dataPanel.setBorder(new EmptyBorder(20, 30, 20, 30));
+        // padding
+        dataPanel.setBorder(new EmptyBorder(20, 30, 10, 30));
 
-        // tabel  film
-        modelMovie = new DefaultTableModel(new String[]{"Judul Film", "Genre"}, 0);
-        dataPanel.add(createCardTable("Daftar Film Aktif", modelMovie));
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weighty = 1.0; // tinggi vertikal
 
-        // tabel  studio
+        // tabel film lebar 25%
+        modelMovie = new DefaultTableModel(new String[]{"Film", "Genre"}, 0);
+        gbc.gridx = 0;
+        gbc.weightx = 0.25;
+        gbc.insets = new Insets(0, 0, 0, 10); // jarak kanan 10px
+        dataPanel.add(createCardTable("Daftar Film Aktif", modelMovie), gbc);
+
+        // tabel studio 25%
         modelStudio = new DefaultTableModel(new String[]{"Studio", "Tipe"}, 0);
-        dataPanel.add(createCardTable("Daftar Studio", modelStudio));
+        gbc.gridx = 1;
+        gbc.weightx = 0.25;
+        gbc.insets = new Insets(0, 5, 0, 5); // Jarak kiri kanan 5px
+        dataPanel.add(createCardTable("Daftar Studio", modelStudio), gbc);
 
-        // tabel  jadwal
-        modelSchedule = new DefaultTableModel(new String[]{"Film", "Jam", "Studio"}, 0);
-        dataPanel.add(createCardTable("Jadwal Tayang", modelSchedule));
+        // tabel jadwal lebar 50%
+        modelSchedule = new DefaultTableModel(new String[]{"Film", "Jam", "Studio", "HTM"}, 0);
+        gbc.gridx = 2;
+        gbc.weightx = 0.5;
+        gbc.insets = new Insets(0, 10, 0, 0); // Jarak kiri 10px
+        dataPanel.add(createCardTable("Jadwal Tayang", modelSchedule), gbc);
 
-        // tombol aksi
-        JPanel actionContainer = new JPanel(new GridLayout(1, 2, 30, 0));
+        // button bawah container
+        JPanel actionContainer = new JPanel(new GridLayout(1, 2, 20, 0)); // Gap horizontal 20
         actionContainer.setOpaque(false);
-        actionContainer.setBorder(new EmptyBorder(10, 30, 40, 30));
+        // padding
+        actionContainer.setBorder(new EmptyBorder(10, 30, 30, 30));
+        actionContainer.setPreferredSize(new Dimension(0, 220)); // Fix tinggi area tombol
 
-        // bagian admin sebelah kiri panel
-        JPanel adminZone = new JPanel(new GridLayout(3, 1, 0, 15));
+        // sebelah kiri untuk pengelolaan
+        JPanel adminZone = new JPanel(new GridLayout(3, 1, 0, 15)); // Gap vertikal antar tombol 15
         adminZone.setOpaque(false);
-        adminZone.setBorder(BorderFactory.createTitledBorder(
-                BorderFactory.createLineBorder(new Color(127, 140, 141))
-        ));
+        adminZone.setBorder(BorderFactory.createTitledBorder("Area Pengelolaan (Admin)"));
 
-        JButton btnMovie = createStyledButton("Kelola Data Film", new Color(52, 152, 219));
-        JButton btnStudio = createStyledButton("Kelola Studio", new Color(52, 152, 219));
-        JButton btnSchedule = createStyledButton("Atur Jadwal Tayang", new Color(155, 89, 182));
+        JButton btnMovie = TemplateAdmin.createStyledButton("Kelola Data Film", TemplateAdmin.COLOR_ACCENT);
+        JButton btnStudio = TemplateAdmin.createStyledButton("Kelola Studio", TemplateAdmin.COLOR_ACCENT);
+        JButton btnSchedule = TemplateAdmin.createStyledButton("Atur Jadwal Tayang", new Color(155, 89, 182)); // Ungu
 
         adminZone.add(btnMovie);
         adminZone.add(btnStudio);
         adminZone.add(btnSchedule);
 
-        // bagian kasir sebelah kanan
-        JPanel bookingZone = new JPanel(new BorderLayout());
+        // sebelah kanan pemesanan
+        JPanel bookingZone = new JPanel(new BorderLayout(0, 15));
         bookingZone.setOpaque(false);
-        bookingZone.setBorder(BorderFactory.createTitledBorder(
-                BorderFactory.createLineBorder(new Color(127, 140, 141))
-        ));
+        bookingZone.setBorder(BorderFactory.createTitledBorder("Area Kasir"));
 
-        JButton btnBooking = createStyledButton("BUKA MENU PEMESANAN TIKET", new Color(39, 174, 96));
-        btnBooking.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        // tombol booking
+        JButton btnBooking = TemplateAdmin.createStyledButton("BUKA MENU PEMESANAN", TemplateAdmin.COLOR_SUCCESS);
+        btnBooking.setFont(new Font(FONT_NAME, Font.BOLD, 22));
 
-        JButton btnRefresh = createStyledButton("Refresh Data", new Color(149, 165, 166));
-
-        JPanel refreshPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        refreshPanel.setOpaque(false);
-        refreshPanel.add(btnRefresh);
+        JButton btnRefresh = TemplateAdmin.createStyledButton("Refresh Data", Color.GRAY);
+        btnRefresh.setPreferredSize(new Dimension(0, 35)); // tombol refresh untuk load data
 
         bookingZone.add(btnBooking, BorderLayout.CENTER);
-        bookingZone.add(refreshPanel, BorderLayout.SOUTH);
+        bookingZone.add(btnRefresh, BorderLayout.SOUTH);
 
         actionContainer.add(adminZone);
         actionContainer.add(bookingZone);
 
-        // masukkan ke panel utama
+        // masukkan semua ke panel utama
         panel.add(headerPanel, BorderLayout.NORTH);
         panel.add(dataPanel, BorderLayout.CENTER);
         panel.add(actionContainer, BorderLayout.SOUTH);
 
-        // event listener untuk pindah halaman
-        btnMovie.addActionListener(e -> cardLayout.show(mainPanel, "ManageMovie"));
-        btnStudio.addActionListener(e -> cardLayout.show(mainPanel, "ManageStudio"));
-        btnSchedule.addActionListener(e -> cardLayout.show(mainPanel, "ManageSchedule"));
-        btnBooking.addActionListener(e -> cardLayout.show(mainPanel, "Booking"));
+        // event listener
+        btnMovie.addActionListener(e -> {
+            moviePanel.refreshTable();
+            cardLayout.show(mainPanel, PANEL_MOVIE);
+        });
 
-        // tombol refresh untuk reload data dari db
+        btnStudio.addActionListener(e -> {
+            studioPanel.refreshTable();
+            cardLayout.show(mainPanel, PANEL_STUDIO);
+        });
+
+        btnSchedule.addActionListener(e -> {
+            schedulePanel.refreshData();
+            cardLayout.show(mainPanel, PANEL_SCHEDULE);
+        });
+
+        btnBooking.addActionListener(e -> {
+            bookingPanel.refreshData();
+            cardLayout.show(mainPanel, PANEL_BOOKING);
+        });
+
         btnRefresh.addActionListener(e -> loadDashboardData());
 
-        // load data saat apk jalan
         loadDashboardData();
-
         return panel;
     }
 
-    // helper untuk bikin tabel yang ada card nya
     private JPanel createCardTable(String title, DefaultTableModel model) {
         JPanel card = new JPanel(new BorderLayout());
         card.setBackground(Color.WHITE);
-        card.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(220, 220, 220), 1),
-                new EmptyBorder(10, 10, 10, 10)
-        ));
+        card.setBorder(BorderFactory.createLineBorder(new Color(220, 220, 220)));
 
         JLabel lbl = new JLabel(title);
-        lbl.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        lbl.setForeground(new Color(44, 62, 80));
-        lbl.setBorder(new EmptyBorder(0, 0, 10, 0));
+        lbl.setFont(new Font(FONT_NAME, Font.BOLD, 16));
+        lbl.setForeground(TemplateAdmin.COLOR_HEADER);
+        lbl.setBorder(new EmptyBorder(15, 15, 10, 0)); // padding judul tabel
 
-        JTable table = new JTable(model);
-        table.setFillsViewportHeight(true);
-        table.setRowHeight(25);
-        table.setShowGrid(false);
-        table.getTableHeader().setBackground(new Color(236, 240, 241));
+        JTable table = new JTable(model) {
+            @Override
+            public boolean isCellEditable(int row, int col) { return false; }
+        };
+        TemplateAdmin.styleTable(table);
 
         JScrollPane sp = new JScrollPane(table);
-        sp.setBorder(BorderFactory.createEmptyBorder());
+        sp.setBorder(null);
+        sp.getViewport().setBackground(Color.WHITE);
 
         card.add(lbl, BorderLayout.NORTH);
         card.add(sp, BorderLayout.CENTER);
         return card;
     }
 
-    // helper untuk styling tombol
-    private JButton createStyledButton(String text, Color bg) {
-        JButton btn = new JButton(text);
-        btn.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        btn.setBackground(bg);
-        btn.setForeground(Color.WHITE);
-        btn.setFocusPainted(false);
-        btn.setBorderPainted(false);
-        btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        return btn;
-    }
-
-    // logic untuk ambil data dari facade ke dashboard
     private void loadDashboardData() {
         facade.refreshData();
 
         modelMovie.setRowCount(0);
-        for (Movie m : facade.getAllMovies()) {
+        for(Movie m : facade.getAllMovies()) {
             modelMovie.addRow(new Object[]{m.getTitle(), m.getGenre()});
         }
 
         modelStudio.setRowCount(0);
-        for (Studio s : facade.getAllStudios()) {
+        for(Studio s : facade.getAllStudios()) {
             String type = (s instanceof models.PremiereStudio) ? "Premiere" : "Regular";
             modelStudio.addRow(new Object[]{s.getName(), type});
         }
 
         modelSchedule.setRowCount(0);
         List<String[]> schedules = facade.getAllSchedulesInfo();
-        for (String[] row : schedules) {
-            modelSchedule.addRow(new Object[]{row[1], row[2], row[0]});
+        for(String[] r : schedules) {
+            modelSchedule.addRow(new Object[]{r[1], r[2], r[0], r[3]});
         }
     }
 
     public static void main(String[] args) {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception ignored) {}
-
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         SwingUtilities.invokeLater(() -> new MainCinemaGUI().setVisible(true));
     }
 }
