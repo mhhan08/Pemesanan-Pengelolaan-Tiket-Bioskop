@@ -1,14 +1,19 @@
 package dao;
 
 import config.DBConnection;
+import models.PremiereStudio;
 import models.Studio;
 import patterns.factory.StudioFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class StudioDAO implements GenericDAO<Studio> {
+    // logger untuk menggantikan system.out.println
+    private static final Logger LOGGER = Logger.getLogger(StudioDAO.class.getName());
 
     @Override
     public void save(Studio studio) {
@@ -17,30 +22,34 @@ public class StudioDAO implements GenericDAO<Studio> {
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
+            // pastikan auto commit nyala
+            conn.setAutoCommit(true);
+
             stmt.setString(1, studio.getName());
 
             // tipe studio yg dipilih
-            String type = "Regular"; // default
-            if (studio instanceof models.PremiereStudio) {
+            String type = "Regular";
+            if (studio instanceof PremiereStudio) {
                 type = "Premiere";
             }
             stmt.setString(2, type);
 
-            // hitung kapasistas
+            // hitung kapasitas
             int capacity = studio.getRowCount() * studio.getColCount();
             stmt.setInt(3, capacity);
 
             stmt.executeUpdate();
 
         } catch (SQLException e) {
-            System.out.println("Error saving studio: " + e.getMessage());
+            LOGGER.log(Level.SEVERE, "error saving studio", e);
         }
     }
 
     @Override
     public List<Studio> getAll() {
         List<Studio> studios = new ArrayList<>();
-        String sql = "SELECT * FROM studios";
+        // ganti select * dengan nama kolom spesifik
+        String sql = "SELECT name, type FROM studios";
 
         try (Connection conn = DBConnection.getConnection();
              Statement stmt = conn.createStatement();
@@ -50,18 +59,26 @@ public class StudioDAO implements GenericDAO<Studio> {
                 String name = rs.getString("name");
                 String type = rs.getString("type");
 
-                //buat objek dari string db dengan factory
-                try {
-                    Studio s = StudioFactory.createStudio(type, name);
+                // panggil method terpisah untuk buat objek studio
+                Studio s = createStudioSafe(type, name);
+                if (s != null) {
                     studios.add(s);
-                } catch (Exception e) {
-                    System.out.println("Skip studio invalid: " + name);
                 }
             }
         } catch (SQLException e) {
-            System.out.println("Error loading studios: " + e.getMessage());
+            LOGGER.log(Level.SEVERE, "error loading studios", e);
         }
         return studios;
+    }
+
+    // method terpisah untuk menangani try-catch factory (memecah nested try block)
+    private Studio createStudioSafe(String type, String name) {
+        try {
+            return StudioFactory.createStudio(type, name);
+        } catch (Exception _) { // unnamed pattern pengganti e
+            LOGGER.log(Level.WARNING, "skip studio invalid: {0}", name);
+            return null;
+        }
     }
 
     @Override
@@ -70,31 +87,12 @@ public class StudioDAO implements GenericDAO<Studio> {
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
+            conn.setAutoCommit(true);
             stmt.setString(1, name);
             stmt.executeUpdate();
 
         } catch (SQLException e) {
-            System.out.println("Error deleting studio: " + e.getMessage());
+            LOGGER.log(Level.SEVERE, "error deleting studio", e);
         }
-    }
-
-    // cari studio
-    public Studio findByName(String name) {
-        String sql = "SELECT * FROM studios WHERE name = ?";
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setString(1, name);
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                String type = rs.getString("type");
-                String dbName = rs.getString("name");
-                return StudioFactory.createStudio(type, dbName);
-            }
-        } catch (SQLException e) {
-            System.out.println("Error finding studio: " + e.getMessage());
-        }
-        return null;
     }
 }

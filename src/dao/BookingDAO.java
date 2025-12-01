@@ -39,7 +39,7 @@ public class BookingDAO {
                     while (rs.next()) {
                         String seatCode = rs.getString("seat_code");
                         // Method ini mengubah boolean[][] jadi true (merah)
-                        studio.bookSeat(sch.getTime(), seatCode);
+                        studio.bookSeat(seatCode);
                     }
                 } catch (SQLException e) {
                     e.printStackTrace();

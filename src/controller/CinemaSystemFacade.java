@@ -106,11 +106,12 @@ public class CinemaSystemFacade {
         List<String[]> rows = new ArrayList<>();
         for (Studio s : loadedStudios) {
             for (Schedule sch : s.getSchedules()) {
+                double price = sch.calculateFinalPrice(s.getBasePrice());
                 rows.add(new String[]{
                         s.getName(),
                         sch.getMovie().getTitle(),
                         sch.getDay() + " - " + sch.getTime(),
-                        sch.getInfo()
+                        "Rp " + (int)price
                 });
             }
         }
@@ -122,7 +123,7 @@ public class CinemaSystemFacade {
         Studio studio = findStudio(studioName);
         if (studio != null) {
             // true jika kursi masih kosong
-            boolean success = studio.bookSeatByIndex(time, row, col);
+            boolean success = studio.bookSeatByIndex(row, col);
 
             if (success) {
                 Schedule schedule = studio.getSchedule(time);

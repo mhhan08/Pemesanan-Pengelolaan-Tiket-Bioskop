@@ -27,28 +27,23 @@ public abstract class Studio {
     }
 
     //untuk menerima angka yg di klik dari gui
-    public boolean bookSeatByIndex(String time, int row, int col) {
+    public boolean bookSeatByIndex(int row, int col) {
         // validasi index kursi
-        if (row >= 0 && row < seats.length && col >= 0 && col < seats[0].length) {
-            // cek ketersediaan kursi
-            if (!seats[row][col]) {
-                seats[row][col] = true;
+        // cek ketersediaan kursi
+        if (row >= 0 && row < seats.length && col >= 0 && col < seats[0].length && !seats[row][col]) {
+            seats[row][col] = true;
 
-                return true;
-            }
+            return true;
         }
         return false;
     }
 
     // cek status kursi
     public boolean isSeatBooked(int row, int col) {
-        if (row >= 0 && row < seats.length && col >= 0 && col < seats[0].length) {
-            return seats[row][col];
-        }
-        return false;
+        return row >= 0 && row < seats.length && col >= 0 && col < seats[0].length && seats[row][col];
     }
 
-    public boolean bookSeat(String time, String seatCode) {
+    public boolean bookSeat(String seatCode) {
         try {
             // konversi tempat duduk
             char rowChar = seatCode.toUpperCase().charAt(0);
@@ -58,9 +53,9 @@ public abstract class Studio {
             int col = Integer.parseInt(colStr) - 1;
 
             // panggil method booking dengan index kursi yg sudah diubah
-            return bookSeatByIndex(time, row, col);
+            return bookSeatByIndex(row, col);
 
-        } catch (Exception e) {
+        } catch (Exception _) {
             return false;
         }
     }

@@ -6,6 +6,11 @@ import models.PremiereStudio;
 
 public class StudioFactory {
 
+    //constructor kosong karena tidak boleh diinisialisasi karena isinya hanya method static
+    private StudioFactory() {
+        throw new IllegalStateException("utility class");
+    }
+
     // method static agar bisa dipanggil tanpa new StudioFactory()
     public static Studio createStudio(String type, String name) {
         if (type == null) {
