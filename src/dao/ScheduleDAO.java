@@ -92,4 +92,18 @@ public class ScheduleDAO {
             LOGGER.log(Level.SEVERE, "error loading schedules", e);
         }
     }
+
+    public void delete(int scheduleId) {
+        String sql = "DELETE FROM schedules WHERE id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            conn.setAutoCommit(true);
+            stmt.setInt(1, scheduleId);
+            stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "error deleting schedule", e);
+        }
+    }
 }

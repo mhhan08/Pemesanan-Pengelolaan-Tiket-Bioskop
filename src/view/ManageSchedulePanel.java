@@ -31,7 +31,7 @@ public class ManageSchedulePanel extends JPanel {
         txtTime = TemplateAdmin.createStyledTextField();
         JButton btnAdd = TemplateAdmin.createStyledButton("Buat Jadwal", new Color(155, 89, 182));
 
-        //setting layout form
+        // setting layout form
 
         // pilih film
         gbc.gridx = 0;
@@ -74,11 +74,12 @@ public class ManageSchedulePanel extends JPanel {
         };
         JTable table = new JTable(tableModel);
 
-        // setup tombol kembali
+        // setup tombol bawah
+        JButton btnDelete = TemplateAdmin.createStyledButton("Hapus Jadwal", TemplateAdmin.COLOR_DANGER);
         JButton btnBack = TemplateAdmin.createStyledButton("Kembali", Color.GRAY);
 
         // masukkan semua komponen ke template admin
-        TemplateAdmin.initPageLayout(this, "Atur Jadwal Penayangan", formPanel, table, btnBack);
+        TemplateAdmin.initPageLayout(this, "Atur Jadwal Penayangan", formPanel, table, btnDelete, btnBack);
 
         // aksi kalo tombol buat jadwal diklik
         btnAdd.addActionListener(e -> {
@@ -87,6 +88,30 @@ public class ManageSchedulePanel extends JPanel {
                 refreshData();
                 JOptionPane.showMessageDialog(this, "Sukses!");
             } catch (Exception ex) { JOptionPane.showMessageDialog(this, "Gagal: " + ex.getMessage()); }
+        });
+
+        // aksi hapus jadwal terpilih
+        btnDelete.addActionListener(e -> {
+            int row = table.getSelectedRow();
+            if (row != -1) {
+                // ambil data studio dan waktu dari tabel untuk hapus
+                String studio = (String) table.getValueAt(row, 0);
+                String waktu = (String) table.getValueAt(row, 2); // format: "Senin - 14:00"
+
+                // pecah string waktu jadi hari dan jam
+                String[] parts = waktu.split(" - ");
+                if (parts.length == 2) {
+                    String day = parts[0];
+                    String time = parts[1];
+
+                    // panggil facade buat hapus
+                    facade.deleteSchedule(studio, day, time);
+                    refreshData();
+                    JOptionPane.showMessageDialog(this, "Jadwal Dihapus!");
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Pilih jadwal dulu!");
+            }
         });
 
         // tombol balik ke dashboard

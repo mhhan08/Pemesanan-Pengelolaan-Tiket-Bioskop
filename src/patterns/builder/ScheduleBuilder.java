@@ -42,6 +42,10 @@ public class ScheduleBuilder {
     }
 
     public ScheduleBuilder setTime(String time) {
+        if (!time.matches("([01]?\\d|2[0-3]):[0-5]\\d")) {
+            throw new IllegalArgumentException("jam tidak valid! gunakan format HH:MM");
+        }
+
         this.time = time;
         return this;
     }
