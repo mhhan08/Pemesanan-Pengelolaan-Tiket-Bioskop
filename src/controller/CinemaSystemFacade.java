@@ -118,6 +118,19 @@ public class CinemaSystemFacade {
         return rows;
     }
 
+    // Method  untuk menghapus jadwal
+    public void deleteSchedule(String studioName, String day, String time) {
+        // cari ID jadwal di database
+        int id = scheduleDAO.getScheduleId(studioName, day, time);
+
+        if (id != -1) {
+            // hapus
+            scheduleDAO.delete(id);
+            // refresh memori agar tabel update
+            refreshData();
+        }
+    }
+
     //booking ticket
     public Ticket bookTicket(String studioName, String time, int row, int col) {
         Studio studio = findStudio(studioName);
