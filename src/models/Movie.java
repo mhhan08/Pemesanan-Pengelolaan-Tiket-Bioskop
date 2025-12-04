@@ -6,6 +6,9 @@ public class Movie {
     private int duration;
 
     public Movie(String title, String genre, int duration) {
+        if (duration <= 0) {
+            throw new IllegalArgumentException("Durasi film harus lebih dari 0 menit!");
+        }
         this.title = title;
         this.genre = genre;
         this.duration = duration;
