@@ -1,11 +1,11 @@
 package view;
 
 import controller.CinemaSystemFacade;
-import models.Movie;
-
+import java.awt.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.awt.*;
+import models.Movie;
+
 
 public class ManageMoviePanel extends JPanel {
     private transient CinemaSystemFacade facade;
@@ -67,7 +67,7 @@ public class ManageMoviePanel extends JPanel {
         JButton btnDelete = TemplateAdmin.createStyledButton("Hapus Terpilih", TemplateAdmin.COLOR_DANGER);
         JButton btnBack = TemplateAdmin.createStyledButton("Kembali", Color.GRAY);
 
-        // masukkan semua komponen ke template admin
+        // masukkan semua komponen ke template admin ini mirip sama yg di judulhalaman di line bawah
         TemplateAdmin.initPageLayout(this, "Kelola Data Film", formPanel, table, btnDelete, btnBack);
 
         // untuk tombol simpan

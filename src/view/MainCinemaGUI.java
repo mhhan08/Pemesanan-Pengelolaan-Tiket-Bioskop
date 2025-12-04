@@ -1,14 +1,13 @@
 package view;
 
 import controller.CinemaSystemFacade;
-import models.Movie;
-import models.Studio;
-
+import java.awt.*;
+import java.util.List;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
-import java.awt.*;
-import java.util.List;
+import models.Movie;
+import models.Studio;
 
 public class MainCinemaGUI extends JFrame {
 
@@ -52,6 +51,7 @@ public class MainCinemaGUI extends JFrame {
         moviePanel = new ManageMoviePanel(facade, cardLayout, mainPanel);
         studioPanel = new ManageStudioPanel(facade, cardLayout, mainPanel);
         schedulePanel = new ManageSchedulePanel(facade, cardLayout, mainPanel);
+        // inisialisasi panel fitur
         bookingPanel = new BookingPanel(facade, cardLayout, mainPanel);
 
         // Tambahkan ke main panel
@@ -201,26 +201,61 @@ public class MainCinemaGUI extends JFrame {
         return card;
     }
 
+    // private void loadDashboardData() {
+    //     facade.refreshData();
+
+    //     modelMovie.setRowCount(0);
+    //     for(Movie m : facade.getAllMovies()) {
+    //         modelMovie.addRow(new Object[]{m.getTitle(), m.getGenre()});
+    //     }
+
+    //     modelStudio.setRowCount(0);
+    //     for(Studio s : facade.getAllStudios()) {
+    //         String type = (s instanceof models.PremiereStudio) ? "Premiere" : "Regular";
+    //         modelStudio.addRow(new Object[]{s.getName(), type});
+    //     }
+
+    //     modelSchedule.setRowCount(0);
+    //     List<String[]> schedules = facade.getAllSchedulesInfo();
+    //     for(String[] r : schedules) {
+    //         modelSchedule.addRow(new Object[]{r[1], r[2], r[0], r[3]});
+    //     }
+    // }
+
     private void loadDashboardData() {
+        if (facade == null) {
+            System.err.println("Facade belum diinisialisasi!");
+            return;
+        }
+
         facade.refreshData();
 
         modelMovie.setRowCount(0);
-        for(Movie m : facade.getAllMovies()) {
-            modelMovie.addRow(new Object[]{m.getTitle(), m.getGenre()});
+        List<Movie> movies = facade.getAllMovies();
+        if (movies != null) {
+            for (Movie m : movies) {
+                modelMovie.addRow(new Object[]{m.getTitle(), m.getGenre()});
+            }
         }
 
         modelStudio.setRowCount(0);
-        for(Studio s : facade.getAllStudios()) {
-            String type = (s instanceof models.PremiereStudio) ? "Premiere" : "Regular";
-            modelStudio.addRow(new Object[]{s.getName(), type});
+        List<Studio> studios = facade.getAllStudios();
+        if (studios != null) {
+            for (Studio s : studios) {
+                String type = (s instanceof models.PremiereStudio) ? "Premiere" : "Regular";
+                modelStudio.addRow(new Object[]{s.getName(), type});
+            }
         }
 
         modelSchedule.setRowCount(0);
         List<String[]> schedules = facade.getAllSchedulesInfo();
-        for(String[] r : schedules) {
-            modelSchedule.addRow(new Object[]{r[1], r[2], r[0], r[3]});
+        if (schedules != null) {
+            for (String[] r : schedules) {
+                modelSchedule.addRow(new Object[]{r[1], r[2], r[0], r[3]});
+            }
         }
     }
+
 
     public static void main(String[] args) {
         try {
