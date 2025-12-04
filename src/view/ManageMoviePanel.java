@@ -95,6 +95,25 @@ public class ManageMoviePanel extends JPanel {
     // fungsi untuk refresh isi tabel dari database
     public void refreshTable() {
         tableModel.setRowCount(0);
-        for(Movie m : facade.getAllMovies()) tableModel.addRow(new Object[]{m.getTitle(), m.getGenre(), m.getDurationMinutes() + " min"});
+        for (Movie m : facade.getAllMovies()) {
+            // hitung durasi jam dan menit
+            int totalMenit = m.getDurationMinutes();
+            int jam = totalMenit / 60;
+            int sisaMenit = totalMenit % 60;
+
+            // format jadi jam
+            String durasiText = jam + " Jam " + sisaMenit + " Menit";
+
+            // hilangkan menit jika jam nya pas
+            if (sisaMenit == 0) {
+                durasiText = jam + " Jam";
+            }
+
+            tableModel.addRow(new Object[]{
+                    m.getTitle(),
+                    m.getGenre(),
+                    durasiText
+            });
+        }
     }
 }
