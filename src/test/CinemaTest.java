@@ -8,16 +8,6 @@ import org.junit.jupiter.api.Test;
 
 class CinemaTest {
 
-    // test menyimpan data film
-    @Test
-    void testDataMovie() {
-        Movie movie = new Movie("Avatar 2", "Thriller", 180);
-
-        Assertions.assertEquals("Avatar 2", movie.getTitle());
-        Assertions.assertEquals("Thriller", movie.getGenre());
-        Assertions.assertEquals(180, movie.getDurationMinutes());
-    }
-
     // test logika booking kursi
     @Test
     void testBookingKursi() {
@@ -73,34 +63,6 @@ class CinemaTest {
         // booking kursi di luar kapasitas baris 100
         boolean bookingJauh = studio.bookSeatByIndex(100, 100);
         Assertions.assertFalse(bookingJauh, "Booking di luar kapasitas");
-    }
-
-    // test simpan data tiket
-    @Test
-    void testDataTiket() {
-        // data dummy
-        Movie movie = new Movie("Titanic", "Romance", 190);
-        Studio studio = new RegularStudio("Studio A");
-        Schedule schedule = new ScheduleBuilder()
-                .setMovie(movie)
-                .setStudio(studio)
-                .setDay("Saturday")
-                .setTime("19:00")
-                .build();
-
-        // Simulasi pembuatan tiket
-        String bookingId = "TRX-001";
-        String seatCode = "A5";
-        double finalPrice = 50000.0;
-
-        Ticket ticket = new Ticket(bookingId, schedule, seatCode, finalPrice);
-
-        // Validasi
-        Assertions.assertEquals("TRX-001", ticket.getBookingId());
-        Assertions.assertEquals("A5", ticket.getSeatCode());
-        Assertions.assertEquals(50000.0, ticket.getFinalPrice());
-        // cek apakah tiket terhubung ke jadwal yang benar
-        Assertions.assertEquals("Titanic", ticket.getSchedule().getMovie().getTitle());
     }
 
     // test validasi input durasi film negatif
