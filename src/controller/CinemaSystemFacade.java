@@ -4,12 +4,11 @@ import dao.BookingDAO;
 import dao.MovieDAO;
 import dao.ScheduleDAO;
 import dao.StudioDAO;
+import java.util.ArrayList;
+import java.util.List;
 import models.*;
 import patterns.builder.ScheduleBuilder;
 import patterns.factory.StudioFactory;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class CinemaSystemFacade {
     private MovieDAO movieDAO = new MovieDAO();
@@ -136,37 +135,62 @@ public class CinemaSystemFacade {
         Studio studio = findStudio(studioName);
         if (studio != null) {
             // true jika kursi masih kosong
-            boolean success = studio.bookSeatByIndex(row, col);
+            // boolean success = studio.bookSeatByIndex(row, col);
 
-            if (success) {
-                Schedule schedule = studio.getSchedule(time);
+            // if (success) {
+            //     Schedule schedule = studio.getSchedule(time);
 
-                if (schedule != null) {
-                    //hitung harga
+            //     if (schedule != null) {
+            //         //hitung harga
+            //         double finalPrice = schedule.calculateFinalPrice(studio.getBasePrice());
+
+            //         // buat id transaksi
+            //         String bookingId = "TRX-" + System.currentTimeMillis();
+
+            //         // keonversi index array jadi kode kursi
+            //         char rowChar = (char) ('A' + row);
+            //         String seatCode = "" + rowChar + (col + 1);
+
+            //         // buat object tiket
+            //         Ticket ticket = new Ticket(bookingId, schedule, seatCode, finalPrice);
+
+            //         // simpan ke db
+            //         int dbScheduleId = scheduleDAO.getScheduleId(studioName, schedule.getDay(), time);
+
+            //         if (dbScheduleId != -1) {
+            //             bookingDAO.save(ticket, dbScheduleId);
+            //         } else {
+            //             System.out.println("Error: ID Jadwal tidak ditemukan di DB");
+            //         }
+
+            //         return ticket; //return ticket ke gui
+            //     }
+            // }
+
+            Schedule schedule = studio.getSchedule(time);
+            if (schedule != null) {
+                boolean success = schedule.bookSeat(row, col);
+
+                if (success) {
                     double finalPrice = schedule.calculateFinalPrice(studio.getBasePrice());
 
-                    // buat id transaksi
                     String bookingId = "TRX-" + System.currentTimeMillis();
-
-                    // keonversi index array jadi kode kursi
                     char rowChar = (char) ('A' + row);
                     String seatCode = "" + rowChar + (col + 1);
 
-                    // buat object tiket
                     Ticket ticket = new Ticket(bookingId, schedule, seatCode, finalPrice);
 
-                    // simpan ke db
                     int dbScheduleId = scheduleDAO.getScheduleId(studioName, schedule.getDay(), time);
-
                     if (dbScheduleId != -1) {
                         bookingDAO.save(ticket, dbScheduleId);
-                    } else {
-                        System.out.println("Error: ID Jadwal tidak ditemukan di DB");
                     }
 
-                    return ticket; //return ticket ke gui
+                    return ticket;
                 }
             }
+            return null;
+
+
         }
         return null; // gagal
     }

@@ -10,6 +10,23 @@ public abstract class Studio {
     protected List<Schedule> schedules = new ArrayList<>();
     protected boolean[][] seats; // true = booked,false = available
 
+    // Tambahkan getter dan setter capacity supaya Schedule bisa panggil
+    public int getCapacity() {
+        return capacity;
+    }
+
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
+        // Jika seats lama dipakai, update ukuran array seats juga
+        if(seats != null) {
+            int rows = seats.length;
+            int cols = seats[0].length;
+            if (rows * cols != capacity) {
+                seats = new boolean[rows][cols]; // reset seats lama
+            }
+        }
+    }
+
     public void addSchedule(Schedule s) {
         schedules.add(s);
     }
@@ -74,5 +91,18 @@ public abstract class Studio {
     }
     public int getColCount() {
         return seats[0].length;
+    }
+
+     // Hitung jumlah kursi yang sudah dibooking (untuk testing lama)
+    public int getBookedCount() {
+        int count = 0;
+        if(seats != null){
+            for (int r = 0; r < seats.length; r++) {
+                for (int c = 0; c < seats[0].length; c++) {
+                    if (seats[r][c]) count++;
+                }
+            }
+        }
+        return count;
     }
 }
